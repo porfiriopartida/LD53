@@ -279,3 +279,5 @@ sysinfo.txt
 
 Build/*
 .idea/
+Assets/Plugins/*
+Assets/Plugins.meta
