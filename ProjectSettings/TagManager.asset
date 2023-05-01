@@ -3,7 +3,10 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Flower
+  - HoneyComb
+  - Bee
   layers:
   - Default
   - TransparentFX
@@ -11,11 +14,11 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Bee
+  - Flower
+  - Heat
+  - Background
+  - Interactable
   - 
   - 
   - 
@@ -40,4 +43,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 3079752455
+    locked: 0
+  - name: HoneyComb
+    uniqueID: 1124497371
+    locked: 0
+  - name: Bees
+    uniqueID: 3462481997
+    locked: 0
+  - name: UI
+    uniqueID: 3635421163
     locked: 0

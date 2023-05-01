@@ -1,0 +1,6 @@
+﻿{
+  "name": "Delibeery.Beeditor",
+  "includePlatforms": ["Editor"],
+  "references": [ "Delibeery" ],
+  "rootNamespace": "PorfirioPartida.Beeditor"
+}

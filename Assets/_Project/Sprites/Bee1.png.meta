@@ -42,7 +42,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -115,7 +115,112 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: Bee1_0
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 80
+        width: 865
+        height: 451
+      alignment: 9
+      pivot: {x: 0.55368817, y: 0.34120077}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5b3dcd6a005a104ab1f49b96421a236
+      internalID: 1258889192
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bee1_1
+      rect:
+        serializedVersion: 2
+        x: 1194
+        y: 63
+        width: 887
+        height: 616
+      alignment: 9
+      pivot: {x: 0.54220074, y: 0.89957225}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3bf7d246b715a2c478531f8063d15b85
+      internalID: 1230161033
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bee1_2
+      rect:
+        serializedVersion: 2
+        x: 2228
+        y: 180
+        width: 769
+        height: 548
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 314ae0099a472474fb4e7c9b9cdb016b
+      internalID: 1842964204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bee1_3
+      rect:
+        serializedVersion: 2
+        x: 3123
+        y: 343
+        width: 490
+        height: 383
+      alignment: 9
+      pivot: {x: 0.58732426, y: 0.4373895}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fd929ff10af7eee41965992fbac751cb
+      internalID: 397657253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bee1_4
+      rect:
+        serializedVersion: 2
+        x: 3822
+        y: 175
+        width: 606
+        height: 683
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cda8cf53d1cc4cb4c9bfb206da8e3b4f
+      internalID: -1191613877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -126,7 +231,12 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Bee1_0: 1258889192
+      Bee1_1: 1230161033
+      Bee1_2: 1842964204
+      Bee1_3: 397657253
+      Bee1_4: -1191613877
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
