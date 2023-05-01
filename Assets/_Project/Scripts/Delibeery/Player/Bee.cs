@@ -1,71 +1,239 @@
 using System;
 using PorfirioPartida.Delibeery.Common;
+using PorfirioPartida.Delibeery.Manager;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace PorfirioPartida.Delibeery.Player
 {
     [RequireComponent(typeof(Rigidbody2D))]
     public class Bee : MonoBehaviour, IInteractable
     {
-        private Rigidbody2D _rb;
-        public Animator animator;
+        [NonSerialized]
+        public Rigidbody2D _rb;
+        public Animator mainAnimator;
+        public Transform bodyTransform;
+        public Animator barAnimator;
+        public Transform beeBarWrapper;
 
         [Header("Jump Params:")]
         public float speedFactor;
+        public float fullHoneySpeedFactor;
+        public float gravityScale;
+        public float fullGravityScale;
         public float jumpForce;
         public float additiveForceJump;
         public float jumpCooldown;
         [Header("Rates")] public float honeyDrainRate = 0.01f;
-        public bool isDraining;
-        public FloatValue totalHoney;
+        private bool _isDraining;
+        public float localHoney;
+        public float maxLocalHoney;
+        public float distanceToDrainThreshold = 0.1f;
+        public float resizeBodyOnFullFactor = .75f;
         
-        [Header("Debug Params:")]
-        [SerializeField]
-        private float consecutiveJumps;
-        [SerializeField]
-        private float jumpCooldownCounter;
-        [SerializeField]
-        private Vector2 lastForce; 
-        private bool _isMovingRight;
-        [SerializeField]
-        private bool isAlive;
+        private float _consecutiveJumps;
+        private float _jumpCooldownCounter;
+        private Vector2 _lastForce; 
+        // private bool _isMovingRight;
+        [SerializeField] public bool isAlive;
+        
+        
+        [Header("DieParams:")]
+        private bool _isFull;
+        private float _timeToDie;
+        public float timeToDie = 4f;
 
+        private float delayToDestroyAfterDie = 3f;
+        private Transform _flowerTarget;
 
         void Start()
         {
             isAlive = true;
             this._rb = GetComponent<Rigidbody2D>();
-            _isMovingRight = true;
-            ResetConstantXSpeed();
+            // _isMovingRight = true;
+            localHoney = 0;
+            _flowerTarget = LebeelManager.Instance.flowerTransform;
+
+            this._rb.gravityScale = gravityScale;
+            ToggleDirection();
+            FixHoneyBarSize();
         }
 
         private void ResetConstantXSpeed()
         {
+            var factor = _isFull ? fullHoneySpeedFactor : speedFactor;
             var curVel = this._rb.velocity;
-            curVel.x = (_isMovingRight ? 1:-1) * speedFactor * Time.deltaTime;
+            curVel.x = (IsMovingRight() ? 1:-1) * factor;
             this._rb.velocity = curVel;
         }
 
+        private bool IsMovingRight()
+        {
+            return !_isFull;
+        }
+
+
         public void ToggleDirection()
         {
-            _isMovingRight = !_isMovingRight;
+            var localBeeTransform = this.transform;
+            var scale = localBeeTransform.localScale;
+            scale.x = IsMovingRight() ? 1:-1;
+            localBeeTransform.localScale = scale;
             ResetConstantXSpeed();
         }
 
         public void Interact()
         {
-            Jump();
-        }
-
-        private void Update()
-        {
-            jumpCooldownCounter -= Time.deltaTime;
-            if (isDraining)
+            if (!isAlive)
             {
-                DrainHoney();
+                return;
+            }
+
+            if (_isDraining)
+            {
+                if (IsFull())
+                {
+                    ResumeFlying();
+                }
+                else
+                {
+                    mainAnimator.SetTrigger(AnimatorConstants.TriggerAnnoy);
+                }
+
+            } else if (_isDropping)
+            {
+                mainAnimator.SetTrigger(AnimatorConstants.TriggerAnnoy);
+            }
+            else
+            {
+                Jump();
             }
         }
+
+        public float Y_DOOM = -50;
+        public float X_HONEYCOMB = 4;
+        private void Update()
+        {
+            if (!isAlive)
+            {
+                return;
+            }
+
+            if (this.transform.position.y < Y_DOOM)
+            {
+                Die();
+            }
+
+            _jumpCooldownCounter -= Time.deltaTime;
+
+            if (_isDraining)
+            {
+                if (CanDrain())
+                {
+                    DrainHoney();
+                }
+                else
+                {
+                    MoveTowardsFlower();
+                }
+                FixHoneyBarSize();
+            }
+            //If Unloading, also fix bar.
+
+            if (this.transform.position.x < X_HONEYCOMB && _isFull)
+            {
+                if (!_isDropping)
+                {
+                    _isDropping = true;
+                    AnimDraining(true);
+                    this._rb.velocity = Vector2.zero;
+                    this._rb.gravityScale = 0;
+                }
+                else
+                {
+                    DropLoad();
+                }
+            }
+        }
+
+        private bool _isDropping;
+
+        private void DropLoad()
+        {
+            var rate = this.honeyDrainRate * Time.deltaTime;
+            this.localHoney -= rate;
+            LebeelManager.Instance.totalHoney.value += rate;
+            ResizeBody();
+            FixHoneyBarSize();
+            
+            if (this.localHoney <= 0)
+            {
+                _isDraining = false;
+                _isDropping = false;
+                this.localHoney = 0;
+                _isFull = false;
+                this._rb.gravityScale = gravityScale;
+
+                AnimIsFull(false);
+                AnimDraining(false);
+                ToggleDirection();
+            }
+        }
+
+        private void FixHoneyBarSize()
+        {
+            var newScale = beeBarWrapper.localScale;
+            newScale.x = GetFullPct();
+            beeBarWrapper.localScale = newScale;
+        }
+
+        public float GetFullPct()
+        {
+            if (!isAlive) return 0;
+            
+            if (maxLocalHoney <= 0) return 1;
+            
+            return localHoney / maxLocalHoney;
+        }
+
+        private void MoveTowardsFlower()
+        {
+            //AnimDraining(false);
+            //TODO: replace with slow motion
+            this.transform.position = _flowerTarget.position;
+        }
+
+        private void AnimDraining(bool val)
+        {
+            mainAnimator.SetBool(AnimatorConstants.IsDraining, val);
+            barAnimator.SetBool(AnimatorConstants.IsDraining, val);
+        }
+
+        private void ResizeBody()
+        {
+            var ls = bodyTransform.localScale;
+            var factor =1 + GetFullPct() * resizeBodyOnFullFactor;
+            ls.y = factor;
+            ls.x = factor;
+            //Debug.Log($"scale must be {ls.y}");
+            bodyTransform.localScale = ls;
+        }
+
+        private void AnimIsFull(bool val)
+        {
+            barAnimator.SetBool(AnimatorConstants.IsFull, val);
+        }
+
+        private bool CanDrain()
+        {
+            var diff = this.transform.position - _flowerTarget.position;
+            return diff.magnitude < distanceToDrainThreshold;
+        }
+
+        private bool IsFull()
+        {
+            return Math.Abs(localHoney - maxLocalHoney) < honeyDrainRate/2f;
+        }
+
         private void Jump()
         {
             if (!isAlive)
@@ -73,57 +241,105 @@ namespace PorfirioPartida.Delibeery.Player
                 return;
             }
 
-            if (jumpCooldownCounter < 0)
+            if (_jumpCooldownCounter < 0)
             {
-                lastForce = Vector2.up * jumpForce;
-                _rb.AddForce(lastForce, ForceMode2D.Impulse);
-                consecutiveJumps = 1;
-                jumpCooldownCounter = jumpCooldown;
+                _lastForce = Vector2.up * jumpForce;
+                _rb.AddForce(_lastForce, ForceMode2D.Impulse);
+                _consecutiveJumps = 1;
+                _jumpCooldownCounter = jumpCooldown;
             }
             else
             {
-                consecutiveJumps++;
-                var jumpFactor = jumpForce + jumpForce * Mathf.Pow(additiveForceJump, consecutiveJumps);
-                lastForce = Vector2.up * jumpFactor;
-                _rb.AddForce(lastForce, ForceMode2D.Impulse);
-                jumpCooldownCounter = jumpCooldown;
+                _consecutiveJumps++;
+                var jumpFactor = jumpForce + jumpForce * Mathf.Pow(additiveForceJump, _consecutiveJumps);
+                _lastForce = Vector2.up * jumpFactor;
+                _rb.AddForce(_lastForce, ForceMode2D.Impulse);
+                _jumpCooldownCounter = jumpCooldown;
             }
 
         }
-
         public void Die()
         {
             this.isAlive = false;
-            animator.SetTrigger(AnimatorConstants.TriggerDie);
+            AnimIsFull(false);
+            AnimDraining(false);
+            mainAnimator.ResetTrigger(AnimatorConstants.TriggerAnnoy);
+            mainAnimator.SetTrigger(AnimatorConstants.TriggerDie);
+            beeBarWrapper.localScale = Vector3.zero;
+            this._rb.gravityScale = .8f;
+        }
+
+        private void Dispose()
+        {
+            GetComponent<BeeGps>().Dispose();
+            Destroy(this.gameObject, delayToDestroyAfterDie);
         }
 
         public void ResumeFlying()
         {
-            animator.enabled = true;
-            isDraining = false;
-            this._rb.gravityScale = 1;
+            AnimIsFull(false);
+            AnimDraining(false);
+            _isDraining = false;
+            this._rb.gravityScale = _isFull ? fullGravityScale:gravityScale;
             ToggleDirection();
             Jump();
-            // ResetConstantXSpeed();
+        }
+
+        private void OnCollisionEnter2D(Collision2D other)
+        {
+            Debug.Log($"OnCollisionEnter2D {other.gameObject.name}");
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.tag == "Flower")
+            Debug.Log($"OnTriggerEnter2D {other.name}");
+            if (_isDraining) return;
+            
+            if (other.CompareTag(TagConstants.Flower))
             {
-                animator.enabled = false;
-                isDraining = true;
-                //0 speed while draining.
-                this._rb.velocity = Vector2.zero;
-                this._rb.gravityScale = 0;
-                DrainHoney();
+                if (localHoney == 0)
+                {
+                    AnimDraining(true);
+                    _isDraining = true;
+                    this._rb.velocity = Vector2.zero;
+                    this._rb.gravityScale = 0;
+                }
+                // else
+                // {
+                //     ToggleDirection();
+                // }
             }
         }
 
-
         private void DrainHoney()
         {
-            totalHoney.value += this.honeyDrainRate * Time.deltaTime;
+            if (_isFull)
+            {
+                if (_timeToDie < 0)
+                {
+                    Die();
+                }
+
+                _timeToDie -= Time.deltaTime;
+                return;
+            }
+
+            if (!_isDraining) return;
+            
+            // AnimDraining(true);
+            if (IsFull())
+            {
+                _timeToDie = timeToDie;
+                _isFull = true;
+                AnimIsFull(true);
+            }
+
+            localHoney += this.honeyDrainRate * Time.deltaTime;
+            ResizeBody();
+            if (localHoney > maxLocalHoney)
+            {
+                localHoney = maxLocalHoney;
+            }
         }
     }
 }

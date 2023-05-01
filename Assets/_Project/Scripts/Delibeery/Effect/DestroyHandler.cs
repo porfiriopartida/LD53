@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace PorfirioPartida.Delibeery.Effect
 {
-    public class DestroyAfterSeconds : MonoBehaviour
+    public class DestroyHandler : MonoBehaviour
     {
         public Vector2 randomSecondsRange;
         

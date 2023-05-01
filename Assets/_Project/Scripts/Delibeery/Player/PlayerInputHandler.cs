@@ -30,7 +30,7 @@ namespace PorfirioPartida.Delibeery.Player
             var hit = Physics2D.Raycast(mainCamera.ScreenToWorldPoint(mousePosition), mainCamera.transform.forward, rayLength, interactablesMask);
             if (hit.collider != null)
             {
-                Debug.Log($"Hit {hit.collider.gameObject.name}");
+                // Debug.Log($"Hit {hit.collider.gameObject.name}");
                 var rotation = Quaternion.identity;
                 rotation.z = Random.Range(fingerPrintRotationRange.x, fingerPrintRotationRange.y);
                 Instantiate(fingerPrintPrefab, hit.point, rotation, fingerPrintStorage);
