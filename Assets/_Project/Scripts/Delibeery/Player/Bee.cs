@@ -92,6 +92,7 @@ namespace PorfirioPartida.Delibeery.Player
             {
                 if (IsFull())
                 {
+                    localHoney = maxLocalHoney;
                     ResumeFlying();
                 }
                 else
@@ -169,12 +170,15 @@ namespace PorfirioPartida.Delibeery.Player
             {
                 _isDraining = false;
                 _isDropping = false;
-                this.localHoney = 0;
                 _isFull = false;
-                this._rb.gravityScale = gravityScale;
-
+                
                 AnimIsFull(false);
                 AnimDraining(false);
+
+                this._rb.gravityScale = gravityScale;
+                this.localHoney = 0;
+                
+                FixHoneyBarSize();
                 ToggleDirection();
             }
         }
@@ -267,6 +271,8 @@ namespace PorfirioPartida.Delibeery.Player
             mainAnimator.SetTrigger(AnimatorConstants.TriggerDie);
             beeBarWrapper.localScale = Vector3.zero;
             this._rb.gravityScale = .8f;
+            
+            Dispose();
         }
 
         private void Dispose()
@@ -285,14 +291,14 @@ namespace PorfirioPartida.Delibeery.Player
             Jump();
         }
 
-        private void OnCollisionEnter2D(Collision2D other)
-        {
-            Debug.Log($"OnCollisionEnter2D {other.gameObject.name}");
-        }
+        //private void OnCollisionEnter2D(Collision2D other)
+        //{
+            //Debug.Log($"OnCollisionEnter2D {other.gameObject.name}");
+       // }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            Debug.Log($"OnTriggerEnter2D {other.name}");
+            //Debug.Log($"OnTriggerEnter2D {other.name}");
             if (_isDraining) return;
             
             if (other.CompareTag(TagConstants.Flower))

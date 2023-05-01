@@ -235,8 +235,8 @@ MonoBehaviour:
   resizeBodyOnFullFactor: 0.75
   isAlive: 1
   timeToDie: 4
-  Y_DOOM: -50
-  X_HONEYCOMB: 21
+  Y_DOOM: -20
+  X_HONEYCOMB: 7.6
 --- !u!50 &1030013926
 Rigidbody2D:
   serializedVersion: 4
