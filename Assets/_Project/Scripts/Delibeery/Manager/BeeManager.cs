@@ -28,7 +28,7 @@ namespace PorfirioPartida.Delibeery.Manager
                 }
             }
 
-            if (xSum > 0 && count > 0)
+            if (count > 0)
             {
                 var newPos = this.transform.position;
                 newPos.x = xSum / count;

@@ -21,5 +21,10 @@ namespace PorfirioPartida.Delibeery.Manager
             HoneyComb.SetHoney(startingHoney);
             beeCounter.value = 0;
         }
+
+        public float GetXHoneyCombLimit()
+        {
+            return HoneyComb.origin.transform.position.x;
+        }
     }
 }

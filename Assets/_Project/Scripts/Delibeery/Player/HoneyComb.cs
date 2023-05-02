@@ -11,6 +11,7 @@ namespace PorfirioPartida.Delibeery.Player
         public float beeCost;
         public Transform beeStorage;
         public Transform origin;
+        public HoneyCombFragment fragments;
         public void Interact()
         {
             if (totalHoneyComb.value >= beeCost)

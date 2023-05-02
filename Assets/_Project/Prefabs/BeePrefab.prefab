@@ -236,7 +236,7 @@ MonoBehaviour:
   isAlive: 1
   timeToDie: 4
   Y_DOOM: -20
-  X_HONEYCOMB: 7.6
+  X_HONEYCOMB: -31.27
 --- !u!50 &1030013926
 Rigidbody2D:
   serializedVersion: 4

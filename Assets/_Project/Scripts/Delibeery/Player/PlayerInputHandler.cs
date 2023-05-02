@@ -27,18 +27,25 @@ namespace PorfirioPartida.Delibeery.Player
 
         private void InteractFound(Vector3 mousePosition)
         {
-            var hit = Physics2D.Raycast(mainCamera.ScreenToWorldPoint(mousePosition), mainCamera.transform.forward, rayLength, interactablesMask);
-            if (hit.collider != null)
+            var hits = Physics2D.RaycastAll(mainCamera.ScreenToWorldPoint(mousePosition), mainCamera.transform.forward, rayLength, interactablesMask);
+
+            for (int i = 0; i < hits.Length; i++)
             {
-                // Debug.Log($"Hit {hit.collider.gameObject.name}");
-                var rotation = Quaternion.identity;
-                rotation.z = Random.Range(fingerPrintRotationRange.x, fingerPrintRotationRange.y);
-                Instantiate(fingerPrintPrefab, hit.point, rotation, fingerPrintStorage);
+                var hit = hits[i];
+                
+                if (hit.collider != null)
+                {
+                    // Debug.Log($"Hit {hit.collider.gameObject.name}");
+                    var rotation = Quaternion.identity;
+                    rotation.z = Random.Range(fingerPrintRotationRange.x, fingerPrintRotationRange.y);
+                    Instantiate(fingerPrintPrefab, hit.point, rotation, fingerPrintStorage);
 
 
-                var interactable = hit.collider.GetComponent<IInteractable>();
-                interactable.Interact();
+                    var interactable = hit.collider.GetComponent<IInteractable>();
+                    interactable.Interact();
+                }
             }
+
         }
 
         public Vector2 fingerPrintRotationRange;

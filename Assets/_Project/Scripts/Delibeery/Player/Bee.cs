@@ -60,6 +60,7 @@ namespace PorfirioPartida.Delibeery.Player
             this._rb.gravityScale = gravityScale;
             ToggleDirection();
             FixHoneyBarSize();
+            X_HONEYCOMB = LebeelManager.Instance.GetXHoneyCombLimit();
         }
 
         private void ResetConstantXSpeed()
