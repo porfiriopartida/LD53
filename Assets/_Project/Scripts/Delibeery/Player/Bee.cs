@@ -168,9 +168,10 @@ namespace PorfirioPartida.Delibeery.Player
             {
                 rate = this.localHoney; //ensure 0s.
                 this.localHoney = 0;
+                
+                LebeelManager.Instance.HoneyComb.AddHoney(maxLocalHoney);
             }
 
-            LebeelManager.Instance.HoneyComb.AddHoney(rate);
             
             ResizeBody();
             FixHoneyBarSize();
@@ -293,7 +294,12 @@ namespace PorfirioPartida.Delibeery.Player
 
         private void Dispose()
         {
+            //Remove from all and adjust counter
             GetComponent<BeeGps>().Dispose();
+            
+            //Fix UI and Level Manager Updates.
+            LebeelManager.Instance.DieCounter();
+            
             Destroy(this.gameObject, delayToDestroyAfterDie);
         }
 
