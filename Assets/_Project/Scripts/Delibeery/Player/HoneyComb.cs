@@ -1,4 +1,5 @@
 ﻿using PorfirioPartida.Delibeery.Common;
+using PorfirioPartida.Delibeery.Manager;
 using UnityEngine;
 
 namespace PorfirioPartida.Delibeery.Player
@@ -15,7 +16,26 @@ namespace PorfirioPartida.Delibeery.Player
             if (totalHoneyComb.value >= beeCost)
             {
                 Instantiate(beePrefab, origin.transform.position, Quaternion.identity, beeStorage);
+                TakeHoney(beeCost);
             }
+        }
+
+        public void TakeHoney(float honey)
+        {
+            totalHoneyComb.value -= honey;
+            GameSceneUIManager.Instance.UpdateHoney();
+        }
+
+        public void AddHoney(float honey)
+        {
+            totalHoneyComb.value += honey;
+            GameSceneUIManager.Instance.UpdateHoney();
+        }
+
+        public void SetHoney(float honey)
+        {
+            totalHoneyComb.value = honey;
+            GameSceneUIManager.Instance.UpdateHoney();
         }
     }
 }

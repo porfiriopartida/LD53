@@ -23,21 +23,22 @@ namespace PorfirioPartida.Delibeery.Player
         public float jumpForce;
         public float additiveForceJump;
         public float jumpCooldown;
+        
+        private float _consecutiveJumps;
+        private float _jumpCooldownCounter;
+        private Vector2 _lastForce; 
+        
         [Header("Rates")] public float honeyDrainRate = 0.01f;
         private bool _isDraining;
+        private bool _isDropping;
+        
         public float localHoney;
         public float maxLocalHoney;
         public float distanceToDrainThreshold = 0.1f;
         public float resizeBodyOnFullFactor = .75f;
         
-        private float _consecutiveJumps;
-        private float _jumpCooldownCounter;
-        private Vector2 _lastForce; 
-        // private bool _isMovingRight;
-        [SerializeField] public bool isAlive;
-        
-        
         [Header("DieParams:")]
+        [SerializeField] public bool isAlive;
         private bool _isFull;
         private float _timeToDie;
         public float timeToDie = 4f;
@@ -45,6 +46,9 @@ namespace PorfirioPartida.Delibeery.Player
         private float delayToDestroyAfterDie = 3f;
         private Transform _flowerTarget;
 
+        public float Y_DOOM = -50;
+        public float X_HONEYCOMB = 4;
+        
         void Start()
         {
             isAlive = true;
@@ -109,9 +113,6 @@ namespace PorfirioPartida.Delibeery.Player
                 Jump();
             }
         }
-
-        public float Y_DOOM = -50;
-        public float X_HONEYCOMB = 4;
         private void Update()
         {
             if (!isAlive)
@@ -156,13 +157,20 @@ namespace PorfirioPartida.Delibeery.Player
             }
         }
 
-        private bool _isDropping;
-
         private void DropLoad()
         {
             var rate = this.honeyDrainRate * Time.deltaTime;
             this.localHoney -= rate;
-            LebeelManager.Instance.totalHoney.value += rate;
+
+            //Substract the last amount, even if smaller than rate.
+            if (this.localHoney - rate < 0)
+            {
+                rate = this.localHoney; //ensure 0s.
+                this.localHoney = 0;
+            }
+
+            LebeelManager.Instance.HoneyComb.AddHoney(rate);
+            
             ResizeBody();
             FixHoneyBarSize();
             
@@ -244,7 +252,13 @@ namespace PorfirioPartida.Delibeery.Player
             {
                 return;
             }
+            if (_rb.velocity.y < 0)
+            {
+                //reset gravity down only
+                _rb.velocity = Vector2.zero;
+            }
 
+            
             if (_jumpCooldownCounter < 0)
             {
                 _lastForce = Vector2.up * jumpForce;
@@ -261,6 +275,7 @@ namespace PorfirioPartida.Delibeery.Player
                 _jumpCooldownCounter = jumpCooldown;
             }
 
+            ResetConstantXSpeed();
         }
         public void Die()
         {
@@ -310,10 +325,6 @@ namespace PorfirioPartida.Delibeery.Player
                     this._rb.velocity = Vector2.zero;
                     this._rb.gravityScale = 0;
                 }
-                // else
-                // {
-                //     ToggleDirection();
-                // }
             }
         }
 
@@ -331,6 +342,13 @@ namespace PorfirioPartida.Delibeery.Player
             }
 
             if (!_isDraining) return;
+
+            localHoney += this.honeyDrainRate * Time.deltaTime;
+            ResizeBody();
+            if (localHoney > maxLocalHoney)
+            {
+                localHoney = maxLocalHoney;
+            }
             
             // AnimDraining(true);
             if (IsFull())
@@ -338,13 +356,6 @@ namespace PorfirioPartida.Delibeery.Player
                 _timeToDie = timeToDie;
                 _isFull = true;
                 AnimIsFull(true);
-            }
-
-            localHoney += this.honeyDrainRate * Time.deltaTime;
-            ResizeBody();
-            if (localHoney > maxLocalHoney)
-            {
-                localHoney = maxLocalHoney;
             }
         }
     }

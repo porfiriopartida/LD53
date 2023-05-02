@@ -7,12 +7,12 @@ namespace PorfirioPartida.Delibeery.Player
     {
         private void Start()
         {
-            BeeManager.Instance.beeList.Add(this);
+            BeeManager.Instance.AddBee(this);
         }
 
         public void Dispose()
         {
-            BeeManager.Instance.beeList.Remove(this);
+            BeeManager.Instance.RemoveBee(this);
         }
     }
 }

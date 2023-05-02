@@ -7,12 +7,13 @@ namespace PorfirioPartida.Delibeery.Manager
 {
     public class BeeManager : Singleton<BeeManager>
     {
+        public FloatValue beeCounter;
         public List<BeeGps> beeList;
 
         private void Update()
         {
             float xSum = 0;
-            int count = beeList.Count;
+            var count = beeList.Count;
             var arr = new BeeGps[count];
             beeList.CopyTo(arr);
             foreach (var beeItem in arr)
@@ -42,6 +43,22 @@ namespace PorfirioPartida.Delibeery.Manager
             {
                 Gizmos.DrawLine(this.transform.position, beeItem.transform.position);
             }
+        }
+
+        public void AddBee(BeeGps beeGps)
+        {
+            beeList.Add(beeGps);
+            beeCounter.value = beeList.Count;
+            
+            GameSceneUIManager.Instance.UpdateBees();
+        }
+
+        public void RemoveBee(BeeGps beeGps)
+        {
+            beeList.Remove(beeGps);
+            beeCounter.value = beeList.Count;
+            
+            GameSceneUIManager.Instance.UpdateBees();
         }
     }
 }
