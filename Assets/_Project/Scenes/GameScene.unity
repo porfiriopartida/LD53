@@ -3480,6 +3480,7 @@ MonoBehaviour:
   beeStorage: {fileID: 2065155847}
   origin: {fileID: 30906830}
   fragments: {fileID: 0}
+  spawnThreshold: 2
 --- !u!61 &864438906
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -8451,7 +8452,7 @@ PrefabInstance:
       objectReference: {fileID: 864438905}
     - target: {fileID: 7786961381948197692, guid: a8e350d0927378d47a6813b05d1a17f4, type: 3}
       propertyPath: startingHoney
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7786961381948197692, guid: a8e350d0927378d47a6813b05d1a17f4, type: 3}
       propertyPath: flowerTransform

@@ -14,11 +14,17 @@ namespace PorfirioPartida.Delibeery.Player
         public HoneyCombFragment fragments;
         public void Interact()
         {
-            if (totalHoneyComb.value >= beeCost)
+            TrySpawnBee();
+        }
+
+        public void TrySpawnBee()
+        {
+            if (totalHoneyComb.value < beeCost)
             {
-                Instantiate(beePrefab, origin.transform.position, Quaternion.identity, beeStorage);
-                TakeHoney(beeCost);
+                return;
             }
+            Instantiate(beePrefab, origin.transform.position, Quaternion.identity, beeStorage);
+            TakeHoney(beeCost);
         }
 
         public void TakeHoney(float honey)
@@ -27,10 +33,15 @@ namespace PorfirioPartida.Delibeery.Player
             GameSceneUIManager.Instance.UpdateHoney();
         }
 
+        public int spawnThreshold;
         public void AddHoney(float honey)
         {
             totalHoneyComb.value += honey;
             GameSceneUIManager.Instance.UpdateHoney();
+            if (totalHoneyComb.value >= spawnThreshold)
+            {
+                TrySpawnBee();
+            }
         }
 
         public void SetHoney(float honey)
