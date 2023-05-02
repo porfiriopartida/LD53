@@ -130,14 +130,15 @@ namespace PorfirioPartida.Delibeery.Player
 
             if (_isDraining)
             {
-                if (CanDrain())
-                {
-                    DrainHoney();
-                }
-                else
-                {
-                    MoveTowardsFlower();
-                }
+                DrainHoney();
+                // if (CanDrain())
+                // {
+                //     DrainHoney();
+                // }
+                // else
+                // {
+                //     MoveTowardsFlower();
+                // }
                 FixHoneyBarSize();
             }
             //If Unloading, also fix bar.
@@ -213,7 +214,8 @@ namespace PorfirioPartida.Delibeery.Player
         {
             //AnimDraining(false);
             //TODO: replace with slow motion
-            this.transform.position = _flowerTarget.position;
+            // this.transform.position = _flowerTarget.position;
+            // this.transform.Translate(1, 0, 0);
         }
 
         private void AnimDraining(bool val)
@@ -339,6 +341,11 @@ namespace PorfirioPartida.Delibeery.Player
         {
             if (_isFull)
             {
+                // if (IsFull())
+                // {
+                    localHoney = maxLocalHoney;
+                    ResumeFlying();
+                // }
                 if (_timeToDie < 0)
                 {
                     Die();
